@@ -1,17 +1,17 @@
 package com.lily.metadataProcessingService.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpEntity;
 
 @Service
 @Slf4j
 public class OAuthTokenValidator {
 
-    private static final String OAUTH_SERVER_URL = "https://auth.example.com/introspect"; // Replace with actual OAuth server
+    private static final String OAUTH_SERVER_URL = "https://auth.example.com/introspect";
 
     public boolean validateToken(String token) {
         try {

@@ -53,7 +53,10 @@ metadataProcessingService/
 ```
 
 ## Application Flow
-1. **Metadata Ingestion:** API receives metadata payloads via HTTP requests (controller or consumer)
+1. **Metadata Ingestion:** 
+   - Receives metadata through HTTP endpoints or Kafka consumers
+   - Initial validation of incoming data
+
 2. **Pre-Processing:**
     - Validates source has the right access and the data type is correct
     - Fetches rule based on current source type, region, event and topic
@@ -75,12 +78,12 @@ metadataProcessingService/
 ### Prerequisites
 - Java 21
 - Maven 3+
-- Kafka (locally or via Docker)
+- Kafka (local or containerized)
 - PostgreSQL
 
 ### Clone the Repository
 ```sh
-git https://github.com/karan-saj/metadata-processing.git
+git clone https://github.com/karan-saj/metadata-processing.git
 cd metadata-processing
 ```
 

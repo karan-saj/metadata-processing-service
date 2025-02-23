@@ -23,6 +23,7 @@ public class MetadataProducer {
 
     private final KafkaTemplate<String, String> kafkaTemplate;
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String UNKNOWN = "UNKNOWN";
 
     @Value("${spring.kafka.topic.outbound}")
     private String outBoundTopic;
@@ -35,7 +36,7 @@ public class MetadataProducer {
     public void sendOutboundKafkaMessage(Metadata metadata, String cdc) {
         // generate outbound message for the current topic
         // check what type of message should be created and what should be the data level
-        Map<String, String> messageMetadata = convertToStringMap(metadata.getMetaData());
+        Map<String, String> messageMetadata = convertToStringMap(metadata.getPayload());
         ProducerRecord<String, String> outBoundMessage = createOutboundMessage(metadata.getEventType(), messageMetadata, cdc);
         publishMetadata(outBoundMessage);
 
@@ -52,9 +53,9 @@ public class MetadataProducer {
             String operation = isInsert ? "INSERT" : "UPDATE";
 
             // Extract key attributes
-            String primaryKey = data.getOrDefault("primaryKey", "UNKNOWN");
-            String primaryKeyValue = data.getOrDefault("primaryKeyValue", "UNKNOWN");
-            String table = data.getOrDefault("table", "UNKNOWN");
+            String primaryKey = data.getOrDefault("primaryKey", UNKNOWN);
+            String primaryKeyValue = data.getOrDefault("primaryKeyValue", UNKNOWN);
+            String table = data.getOrDefault("table", UNKNOWN);
 
             // Construct CDC structure
             kafkaMessage.put("eventId", UUID.randomUUID().toString());

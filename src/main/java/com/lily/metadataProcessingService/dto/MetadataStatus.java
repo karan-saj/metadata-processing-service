@@ -1,8 +1,7 @@
-package com.lily.metadataProcessingService.common;
+package com.lily.metadataProcessingService.dto;
 
 public enum MetadataStatus {
-    PENDING,
     PROCESSING,
     COMPLETED,
     FAILED
-}
+} 
