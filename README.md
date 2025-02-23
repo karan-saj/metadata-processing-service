@@ -53,7 +53,10 @@ metadataProcessingService/
 ```
 
 ## Application Flow
-1. **Metadata Ingestion:** API receives metadata payloads via HTTP requests (controller or consumer)
+1. **Metadata Ingestion:** 
+   - Receives metadata through HTTP endpoints or Kafka consumers
+   - Initial validation of incoming data
+
 2. **Pre-Processing:**
     - Validates source has the right access and the data type is correct
     - Fetches rule based on current source type, region, event and topic
@@ -75,12 +78,12 @@ metadataProcessingService/
 ### Prerequisites
 - Java 21
 - Maven 3+
-- Kafka (locally or via Docker)
+- Kafka (local or containerized)
 - PostgreSQL
 
 ### Clone the Repository
 ```sh
-git https://github.com/karan-saj/metadata-processing.git
+git clone https://github.com/karan-saj/metadata-processing.git
 cd metadata-processing
 ```
 
@@ -125,6 +128,97 @@ mvn spring-boot:run
   "status": "Processed"
 }
 ```
+
+## Cost Estimate
+
+1. Kubernetes Cluster (AWS EKS)
+* EKS Control Plane: $0.10/hour ($73/month)
+  - Fixed cost for managing the Kubernetes control plane
+  - Includes etcd, API server, and scheduler management
+  
+* EC2 Worker Nodes: 2 × t3.medium ($60/month)
+  - t3.medium specs: 2 vCPU, 4GB RAM
+  - $0.0416/hour per instance
+  - Chosen based on expected workload:
+    - CPU: ~60% utilization for metadata processing
+    - Memory: ~2GB for Java heap + system operations
+    - Supports ~100 concurrent metadata processing requests
+
+2. Kafka (AWS MSK)
+* Broker: $0.08/hour ($60/month)
+  - kafka.t3.small instance
+  - Includes 2 vCPU, 2GB RAM
+  - Storage: 100GB GP2 EBS
+  - Metrics:
+    - Throughput: Up to 100 MB/s
+    - Message retention: 7 days
+    - Max message size: 1MB
+
+* Zookeeper: $0.04/hour ($30/month)
+  - t3.small instance
+  - Required for Kafka cluster management
+  - Minimal resource usage, mainly for metadata
+
+3. PostgreSQL (AWS RDS)
+* Single Instance: $0.10/hour ($73/month)
+  - db.t3.small instance
+  - 2 vCPU, 2GB RAM
+  - 100GB GP2 storage
+  - Metrics:
+    - IOPS: 300 baseline
+    - Storage throughput: 125MB/s
+    - Connections: Up to 100 concurrent
+    - Backup retention: 7 days
+
+4. Logging and Monitoring (Splunk)
+* $0.30 per instance per month
+  - Includes:
+    - Log ingestion: 500MB/day
+    - Log retention: 30 days
+    - 5 saved searches
+    - Basic dashboards
+  - Metrics monitored:
+    - Application logs
+    - System metrics
+    - Error tracking
+    - Performance metrics
+
+5. Storage (AWS S3)
+* $0.023 per GB per month
+  - 100GB allocation
+  - Use cases:
+    - Metadata backup storage
+    - Large file temporary storage
+    - Audit logs
+  - Metrics:
+    - Read operations: 2000/month
+    - Write operations: 1000/month
+    - Data transfer: 50GB/month
+
+Total Monthly Cost Breakdown:
+* Infrastructure: $296/month
+  - Kubernetes (EKS + EC2): $133
+  - Kafka (MSK): $90
+  - PostgreSQL (RDS): $73
+
+* Operations: $2.60/month
+  - Logging (Splunk): $0.30
+  - Storage (S3): $2.30
+
+Total Estimated Cost: $298.60/month
+
+Notes:
+1. Prices don't include data transfer costs between services
+2. Reserved instances could reduce costs by 20-40%
+3. Auto-scaling might increase costs during peak loads
+4. Development/testing environments would incur additional costs
+  
+Cost Optimization Opportunities:
+1. Use spot instances for non-critical workloads
+2. Implement data lifecycle policies in S3
+3. Optimize Kafka retention periods
+4. Consider reserved instances for committed usage
+5. Monitor and adjust instance sizes based on actual usage
 
 ## Future Enhancements
 - **Enhanced Logging:** Detailed logging for each step. Actuator is integrated for performance but more details should be added

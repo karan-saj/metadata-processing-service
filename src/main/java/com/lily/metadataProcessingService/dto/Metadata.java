@@ -10,7 +10,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Metadata {
+    private String id;
     private String eventType;
-    private String metaDataType;
-    private Map<String, Object> metaData;
+    private String metadataType;
+    private Map<String, Object> payload;
 }

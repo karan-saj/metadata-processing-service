@@ -5,6 +5,10 @@ import java.util.stream.Collectors;
 
 public class CommonUtil {
 
+    private CommonUtil() {
+        // Private constructor to hide implicit public one
+    }
+
     public static Map<String, String> convertToStringMap(Map<String, Object> objectMap) {
         return objectMap.entrySet().stream()
                 .collect(Collectors.toMap(

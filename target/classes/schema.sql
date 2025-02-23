@@ -26,24 +26,3 @@ CREATE TABLE metadata_history (
 -- Indexes for CDC queries
 CREATE INDEX index_metadata_history_metadata_id ON metadata_history (metadata_id);
 CREATE INDEX index_metadata_history_operation ON metadata_history (operation);
-
--- New tables for metadata rules
-CREATE TABLE metadata_rules (
-    id VARCHAR(255) PRIMARY KEY,
-    source_id VARCHAR(255),
-    source_type VARCHAR(255),
-    tenant_id VARCHAR(255) NOT NULL,
-    allowed_input_formats TEXT,
-    allowed_output_formats TEXT,
-    required_fields TEXT,
-    pii_fields TEXT,
-    priority VARCHAR(50),
-    batching_allowed BOOLEAN,
-    max_batch_size INTEGER,
-    use_global_defaults BOOLEAN,
-    configuration JSONB
-);
-
--- Indexes for better query performance
-CREATE INDEX idx_metadata_rules_tenant ON metadata_rules(tenant_id);
-CREATE INDEX idx_metadata_rules_source ON metadata_rules(source_id, source_type);

@@ -13,4 +13,5 @@ public class MetadataRecord {
 
     private String key;
     private String value;
+    private String tenantId;
 }
